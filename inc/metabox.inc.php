@@ -70,7 +70,7 @@ public function save_metabox($post_id, $post, $update) {
     // }
 
     // Update post meta
-    update_post_meta($post_id, $this->meta_slug_og, $this->sanitize_array($_POST['kmfdtr_metadata[]']));
+    update_post_meta($post_id, $this->meta_slug_og, $this->sanitize_array($_POST[$this->meta_slug_og]));
 }
     public function sanitize_array($input_array){
         if(is_array($input_array)){

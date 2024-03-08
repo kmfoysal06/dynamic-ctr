@@ -16,19 +16,19 @@ class KMFDTR_METS {
         wp_nonce_field(basename(__FILE__), 'kmfdtr_meta_nonce');
         echo '
         <label for="taxonomy">Taxonomy Name:</label>
-        <input type="text" id="taxonomy" name="taxonomy" required><br>
+        <input type="text" id="taxonomy" name="kmfdtr_metadata[][tax_name]" required><br>
         <label for="label">Taxonomy ID:</label>
-        <input type="text" id="label" name="label" required><br>
+        <input type="text" id="label" name="kmfdtr_metadata[][tax_id]" required><br>
         <label for="post_type">Post Type Name:</label>
-        <input type="text" id="post_type" name="post_type" required><br>
+        <input type="text" id="post_type" name="kmfdtr_metadata[][post_type]" required><br>
         <label for="hirarchial">Hirarchial:</label>
-        <input type="checkbox" id="hirarchial" name="hirarchial">
+        <input type="checkbox" id="hirarchial" name="kmfdtr_metadata[][hirarchial]">
         <br>
         <label for="query_var">Query Var:</label>
-        <input type="checkbox" id="query_var" name="query_var">
+        <input type="checkbox" id="query_var" name="kmfdtr_metadata[][query_var]">
         <br>
         <label for="show_admin_column">Show Admin Column:</label>
-        <input type="checkbox" id="show_admin_column" name="show_admin_column">
+        <input type="checkbox" id="show_admin_column" name="kmfdtr_metadata[][show_admin_column]">
         ';
 }
 
@@ -70,7 +70,7 @@ public function save_metabox($post_id, $post, $update) {
     // }
 
     // Update post meta
-    update_post_meta($post_id, $this->meta_slug_og, $this->sanitize_array($_POST[$this->meta_slug_og]));
+    update_post_meta($post_id, $this->meta_slug_og, $this->sanitize_array($_POST['kmfdtr_metadata[]']));
 }
     public function sanitize_array($input_array){
         if(is_array($input_array)){

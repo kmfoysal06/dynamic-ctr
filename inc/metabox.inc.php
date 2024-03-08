@@ -15,9 +15,20 @@ class KMFDTR_METS {
     public function metabox_html(){
         wp_nonce_field(basename(__FILE__), 'kmfdtr_meta_nonce');
         echo '
-            <div class="great">
-                <input type="text" placeholder="Enter The Taxonomy"/>
-            </div>
+        <label for="taxonomy">Taxonomy Name:</label>
+        <input type="text" id="taxonomy" name="taxonomy" required><br>
+        <label for="label">Taxonomy ID:</label>
+        <input type="text" id="label" name="label" required><br>
+        <label for="post_type">Post Type Name:</label>
+        <input type="text" id="post_type" name="post_type" required><br>
+        <label for="hirarchial">Hirarchial:</label>
+        <input type="checkbox" id="hirarchial" name="hirarchial">
+        <br>
+        <label for="query_var">Query Var:</label>
+        <input type="checkbox" id="query_var" name="query_var">
+        <br>
+        <label for="show_admin_column">Show Admin Column:</label>
+        <input type="checkbox" id="show_admin_column" name="show_admin_column">
         ';
 }
 

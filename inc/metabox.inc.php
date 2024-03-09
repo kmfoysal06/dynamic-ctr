@@ -16,20 +16,28 @@ class KMFDTR_METS {
         wp_nonce_field(basename(__FILE__), 'kmfdtr_meta_nonce');
         echo '
         <label for="taxonomy">Taxonomy Name:</label>
-        <input type="text" id="taxonomy" name="kmfdtr_metadata[][tax_name]" required><br>
+        <input type="text" id="taxonomy" name="kmfdtr_metadata[][tax_name]" value="'.$this->get_the_saved_value(get_the_ID(),$this->meta_slug_og,'text','tax_name').'" required><br>
         <label for="label">Taxonomy ID:</label>
-        <input type="text" id="label" name="kmfdtr_metadata[][tax_id]" required><br>
+        <input type="text" id="label" name="kmfdtr_metadata[][tax_id]"  value="'.$this->get_the_saved_value(get_the_ID(),$this->meta_slug_og,'text','tax_id').'" required><br>
         <label for="post_type">Post Type Name:</label>
-        <input type="text" id="post_type" name="kmfdtr_metadata[][post_type]" required><br>
+        <input type="text" id="post_type" name="kmfdtr_metadata[][post_type]" value="'.$this->get_the_saved_value(get_the_ID(),$this->meta_slug_og,'text','post_type').'" required><br>
         <label for="hirarchial">Hirarchial:</label>
-        <input type="checkbox" id="hirarchial" name="kmfdtr_metadata[][hirarchial]">
+        <input type="checkbox" id="hirarchial" name="kmfdtr_metadata[][hirarchial]" '.$this->get_the_saved_value(get_the_ID(),$this->meta_slug_og,'select','hirarchial').'>
         <br>
         <label for="query_var">Query Var:</label>
-        <input type="checkbox" id="query_var" name="kmfdtr_metadata[][query_var]">
+        <input type="checkbox" id="query_var" name="kmfdtr_metadata[][query_var]" '.$this->get_the_saved_value(get_the_ID(),$this->meta_slug_og,'select','query_var').'>
         <br>
         <label for="show_admin_column">Show Admin Column:</label>
-        <input type="checkbox" id="show_admin_column" name="kmfdtr_metadata[][show_admin_column]">
+        <input type="checkbox" id="show_admin_column" name="kmfdtr_metadata[][show_admin_column]" '.$this->get_the_saved_value(get_the_ID(),$this->meta_slug_og,'select','show_admin_column').'>
         ';
+        $post_types = get_post_types([], 'objects');
+        echo '<label for="post_types">Select Post Types:</label>';
+        echo '<select id="post_types" name="kmfdtr_metadata[][post_types]" multiple>';
+        foreach ($post_types as $post_type) {
+            echo '<option value="'.$post_type->name.'" '.$this->get_the_saved_value(get_the_ID(),$this->meta_slug_og,"multi_select",$post_type->name,"post_types").'>'.$post_type->name.'</option>';
+        }
+        echo '</select>';
+
 }
 
 
@@ -72,6 +80,47 @@ public function save_metabox($post_id, $post, $update) {
     // Update post meta
     update_post_meta($post_id, $this->meta_slug_og, $this->sanitize_array($_POST[$this->meta_slug_og]));
 }
+
+public function get_the_saved_value($id,$slug,$type,$key,$needle=false){
+    $id = absint($id); // Ensure $id is an integer
+    $slug = sanitize_key($slug); // Ensure $slug contains only alphanumeric characters and underscores
+    $type = sanitize_text_field($type); // Ensure $type is a string
+    $key = sanitize_key($key); // Ensure $key contains only alphanumeric characters and underscores
+
+    $dbs = get_post_meta($id,$slug,true);
+    return sanitize_text_field($this->sanitize_data($dbs,$key,$type,$needle));
+}
+
+public function sanitize_data($data,$data_key,$type,$neddle_for_multiselect=false){
+            if(is_array($data)){
+                switch($type){
+                case 'text':
+                    $data = array_merge(...$data);
+                    if(array_key_exists($data_key, $data) && $data[$data_key] !== null){
+                        return $data[$data_key];
+                    }
+                    break;
+                case 'select':
+                    $data = array_merge(...$data);
+                    if(array_key_exists($data_key, $data) && $data[$data_key] !== null){
+                        return $data[$data_key] == 'on' ? 'checked' : '' ;
+                    }
+                    break;
+                case 'multi_select':
+                    foreach ($data as $item) {
+                        if (isset($item[$neddle_for_multiselect]) && $item[$neddle_for_multiselect] == $data_key) {
+                            return 'selected';
+                        }
+                    }
+                    break;
+                    default:
+                        return;
+                    break;
+                     }
+            }
+    }
+
+
     public function sanitize_array($input_array){
         if(is_array($input_array)){
             return array_map([$this,'sanitize_array'], $input_array);

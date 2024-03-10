@@ -27,11 +27,3 @@ function admin_enqueue_scripts_callback(){
 
 }
 add_action( 'admin_enqueue_scripts', 'admin_enqueue_scripts_callback' );
-function kmfdtr_texonomy_temp(){
-    register_taxonomy('cpt_cat', 'cpt', [
-        'hierarchical' => true,
-        'label' => 'Cpt Category',
-        'query_var' => true,
-        'show_admin_column' => true,
-    ]);
-}

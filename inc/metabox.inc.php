@@ -30,7 +30,7 @@ class KMFDTR_METS {
         ';
         $post_types = get_post_types([], 'objects');
         echo '<label for="'.esc_attr( "post_types" ).'">'.esc_html("Post Types").'</label>';
-        echo '<select name="'.esc_attr( "kmfdtr_metadata[][post_types]" ).'" id="'.esc_attr( "post_types" ).'" '.esc_attr( "Post Types" ).'>';
+        echo '<select name="'.esc_attr( "kmfdtr_metadata[][post_types]" ).'" id="'.esc_attr( "post_types" ).'" '.esc_attr( "Post Types" ).' '.esc_attr( "multiple" ).'>';
         foreach ($post_types as $post_type) {
             echo '<option value="'.esc_attr( $post_type->name ).'" '.esc_attr( $this->get_the_saved_value(get_the_ID(),$this->meta_slug_og,'multi_select',$post_type->name,'post_types') ).'>'.esc_html( $post_type->label ).'</option>';
         }
@@ -64,14 +64,25 @@ public function save_metabox($post_id, $post, $update) {
     // Sanitize and validate input data
     $tax_id = isset($_POST[$this->meta_slug_og]['tax_id']) ? sanitize_key($_POST[$this->meta_slug_og]['tax_id']) : '';
     $tax_name = isset($_POST[$this->meta_slug_og]['tax_name']) ? sanitize_text_field($_POST[$this->meta_slug_og]['tax_name']) : '';
-    if(empty($tax_id) || empty($tax_name) || strlen($tax_id) > 20 || strlen($tax_name) > 20 || !preg_match('/^[a-zA-Z0-9_]+$/', $tax_id) || !preg_match('/^[a-zA-Z0-9_]+$/', $tax_name)){
+
+    foreach($_POST[$this->meta_slug_og] as $value){
+        if(isset($value['tax_id'])){
+            $tax_id = sanitize_key($value['tax_id']);
+        }else if(isset($value['tax_name'])){
+            $tax_name = sanitize_text_field($value['tax_name']);
+        }
+    }
+
+
+
+    if(empty($tax_id) || empty($tax_name) || strlen($tax_id) > 20 || strlen($tax_name) > 20 || !preg_match('/^[a-zA-Z0-9_]+$/', $tax_id)){
         return;
     }
     // Check for uniqueness of ID using WordPress API
-    $existing_ids = get_terms($tax_id, ['hide_empty' => false]);
-    if ($existing_ids) {
-        return; // ID or name already exists, return to avoid duplicate
-    }
+    // $existing_ids = get_terms($tax_id, ['hide_empty' => false]);
+    // if ($existing_ids) {
+    //     return; // ID or name already exists, return to avoid duplicate
+    // }
     // Update post meta
     update_post_meta($post_id, $this->meta_slug_og, $this->sanitize_array($_POST[$this->meta_slug_og]));
 }

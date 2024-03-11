@@ -18,7 +18,7 @@ function kmfdtr_post(){
 
         // Insert the post into the database
         if (is_wp_error(wp_insert_post($new_post))) {
-            wp_die('there is an error');
+            wp_die('there is an error.');
         }
     }
     }

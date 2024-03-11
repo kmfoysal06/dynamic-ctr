@@ -12,4 +12,6 @@ function kmfdtr_texonomy_post() {
         'menu_icon' => 'dashicons-tag',
     ]);
 }
-add_action('init', 'kmfdtr_texonomy_post');
+if(function_exists('kmfdtr_texonomy_post')){
+    add_action('init', 'kmfdtr_texonomy_post');
+}

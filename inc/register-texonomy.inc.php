@@ -1,5 +1,5 @@
 <?php
-
+//taxonomy register template to register taxonomies with loop
 function kmfdtr_texonomy_temp($tax_name = '', $tax_id = '', $hirarchial = false, $query_var = false, $show_admin_column = false, $post_types = []){
     register_taxonomy($tax_id, $post_types, [
         'hierarchical' => $hirarchial,
@@ -8,7 +8,7 @@ function kmfdtr_texonomy_temp($tax_name = '', $tax_id = '', $hirarchial = false,
         'show_admin_column' => $show_admin_column,
     ]);
 }
-
+//function to get data from database and register taxonomies
 function kmfdtr_getData(){
     $query = new WP_Query(['post_type'=>'kmfdtr_ctr','posts_per_page'=>'-1']);
     if($query->have_posts()){
@@ -33,6 +33,7 @@ function kmfdtr_getData(){
                 }
 
             }
+            //check if the values are set or not and if not set then set them to empty and converting checkbox values to boolean
             $tax_id = (isset($tax_id) && !empty($tax_id)) ? $tax_id : '';
             $tax_name = (isset($tax_name) && !empty($tax_name)) ? $tax_name : '';
             $post_types = (isset($post_types) && !empty($post_types)) ? $post_types : [];
@@ -40,6 +41,7 @@ function kmfdtr_getData(){
             $query_var = (isset($query_var) && $query_var == 'on') ? true : false;
             $show_admin_column = (isset($show_admin_column) && $show_admin_column == 'on') ? true : false;
             if(function_exists('kmfdtr_texonomy_temp')){
+                //register the taxonomy here
                 kmfdtr_texonomy_temp($tax_name, $tax_id, $hirarchial, $query_var, $show_admin_column, $post_types);
             }
         }else{

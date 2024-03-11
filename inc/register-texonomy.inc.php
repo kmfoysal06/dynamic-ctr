@@ -1,4 +1,7 @@
 <?php
+if(!defined('ABSPATH')){
+    exit; // exit if accessed directly
+}
 //taxonomy register template to register taxonomies with loop
 function kmfdtr_texonomy_temp($tax_name = '', $tax_id = '', $hirarchial = false, $query_var = false, $show_admin_column = false, $post_types = []){
     register_taxonomy($tax_id, $post_types, [

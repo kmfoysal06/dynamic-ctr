@@ -1,4 +1,8 @@
 <?php
+if(!defined('ABSPATH')){
+    exit; // exit if accessed directly
+}
+//register post type for custom taxonomy registration
 function kmfdtr_texonomy_post() {
     register_post_type('kmfdtr_ctr', [
         'label' => 'CTR',

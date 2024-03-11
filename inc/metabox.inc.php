@@ -28,6 +28,7 @@ class KMFDTR_METS {
         <br>
         <label for="'.esc_attr( "show_admin_column" ).'">'.esc_html( "Show Admin Column:" ).'</label>
         <input type="'.esc_attr( "checkbox" ).'" id="'.esc_attr( "show_admin_column" ).'" name="'.esc_attr( "kmfdtr_metadata[][show_admin_column]" ).'" '.esc_attr( $this->get_the_saved_value(get_the_ID(),$this->meta_slug_og,'select','show_admin_column') ).'>
+        <br>
         ';
         $post_types = get_post_types([], 'objects');
         echo '<label for="'.esc_attr( "post_types" ).'">'.esc_html("Post Types").'</label>';

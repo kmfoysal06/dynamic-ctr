@@ -8,10 +8,11 @@ class KMFDTR_METS {
     public $meta_slug_og;
     public $meta_title;
     public $meta_id;
-    
+    //create metabox with slug '$this->meta_slug'
     public function create_metabox() {
-        add_meta_box('kmfdtr_meta', $this->meta_title, [$this, 'metabox_html'], 'kmfdtr_ctr');
+        add_meta_box($this->meta_slug, $this->meta_title, [$this, 'metabox_html'], 'kmfdtr_ctr');
     }
+    // html output will be printed for the registered metabox
     public function metabox_html(){
         wp_nonce_field(basename(__FILE__), 'kmfdtr_meta_nonce');
         echo '
@@ -38,66 +39,57 @@ class KMFDTR_METS {
 
 }
 
-
-public function save_metabox($post_id, $post, $update) {
-    // Check if this is a valid post object and the post type is 'cpr'
-    if (!($post instanceof WP_Post) || 'kmfdtr_ctr' !== $post->post_type) {
-        return;
-    }
-
-    // Nonce verification
-    $kmfdtr_meta_nonce = isset($_POST['kmfdtr_meta_nonce']) ? sanitize_text_field($_POST['kmfdtr_meta_nonce']) : '';
-    if (!wp_verify_nonce($kmfdtr_meta_nonce, basename(__FILE__))) {
-        return;
-    }
-
-    // Avoid autosave and revision issues
-    if (wp_is_post_revision($post_id) || defined('DOING_AUTOSAVE') && DOING_AUTOSAVE || wp_is_post_autosave($post_id)) {
-        return;
-    }
-
-    // Check permissions
-    if (!current_user_can('edit_post', $post_id)) {
-        return;
-    }
-
-    // Sanitize and validate input data
-    $tax_id = isset($_POST[$this->meta_slug_og]['tax_id']) ? sanitize_key($_POST[$this->meta_slug_og]['tax_id']) : '';
-    $tax_name = isset($_POST[$this->meta_slug_og]['tax_name']) ? sanitize_text_field($_POST[$this->meta_slug_og]['tax_name']) : '';
-
-    foreach($_POST[$this->meta_slug_og] as $value){
-        if(isset($value['tax_id'])){
-            $tax_id = sanitize_key($value['tax_id']);
-        }else if(isset($value['tax_name'])){
-            $tax_name = sanitize_text_field($value['tax_name']);
+    //update the metabox when the post is saved
+    public function save_metabox($post_id, $post, $update) {
+        // Check if this is a valid post object and the post type is 'cpr'
+        if (!($post instanceof WP_Post) || 'kmfdtr_ctr' !== $post->post_type) {
+            return;
         }
+
+        // Nonce verification
+        $kmfdtr_meta_nonce = isset($_POST['kmfdtr_meta_nonce']) ? sanitize_text_field($_POST['kmfdtr_meta_nonce']) : '';
+        if (!wp_verify_nonce($kmfdtr_meta_nonce, basename(__FILE__))) {
+            return;
+        }
+
+        // Avoid autosave and revision issues
+        if (wp_is_post_revision($post_id) || defined('DOING_AUTOSAVE') && DOING_AUTOSAVE || wp_is_post_autosave($post_id)) {
+            return;
+        }
+
+        // Check permissions
+        if (!current_user_can('edit_post', $post_id)) {
+            return;
+        }
+
+        // Sanitize and validate input data
+
+        $marged_post_data = array_merge(...$_POST[$this->meta_slug_og]);
+
+        $tax_id = isset($marged_post_data['tax_id']) ? $marged_post_data['tax_id'] : '';
+        $tax_name = isset($marged_post_data['tax_name']) ? $marged_post_data['tax_name'] : '';
+
+
+
+        if(empty($tax_id) || empty($tax_name) || strlen($tax_id) > 20 || strlen($tax_name) > 20 || !preg_match('/^[a-zA-Z0-9_]+$/', $tax_id)){
+            return;
+        }
+
+        // Update post meta
+        update_post_meta($post_id, $this->meta_slug_og, $this->sanitize_array($_POST[$this->meta_slug_og]));
     }
 
+    public function get_the_saved_value($id,$slug,$type,$key,$needle=false){
+        $id = absint($id); // Ensure $id is an integer
+        $slug = sanitize_key($slug); // Ensure $slug contains only alphanumeric characters and underscores
+        $type = sanitize_text_field($type); // Ensure $type is a string
+        $key = sanitize_key($key); // Ensure $key contains only alphanumeric characters and underscores
 
-
-    if(empty($tax_id) || empty($tax_name) || strlen($tax_id) > 20 || strlen($tax_name) > 20 || !preg_match('/^[a-zA-Z0-9_]+$/', $tax_id)){
-        return;
+        $dbs = get_post_meta($id,$slug,true);
+        return sanitize_text_field($this->sanitize_data($dbs,$key,$type,$needle));
     }
-    // Check for uniqueness of ID using WordPress API
-    // $existing_ids = get_terms($tax_id, ['hide_empty' => false]);
-    // if ($existing_ids) {
-    //     return; // ID or name already exists, return to avoid duplicate
-    // }
-    // Update post meta
-    update_post_meta($post_id, $this->meta_slug_og, $this->sanitize_array($_POST[$this->meta_slug_og]));
-}
-
-public function get_the_saved_value($id,$slug,$type,$key,$needle=false){
-    $id = absint($id); // Ensure $id is an integer
-    $slug = sanitize_key($slug); // Ensure $slug contains only alphanumeric characters and underscores
-    $type = sanitize_text_field($type); // Ensure $type is a string
-    $key = sanitize_key($key); // Ensure $key contains only alphanumeric characters and underscores
-
-    $dbs = get_post_meta($id,$slug,true);
-    return sanitize_text_field($this->sanitize_data($dbs,$key,$type,$needle));
-}
-
-public function sanitize_data($data,$data_key,$type,$neddle_for_multiselect=false){
+        //sanitize function to sanitize complex data .
+        public function sanitize_data($data,$data_key,$type,$neddle_for_multiselect=false){
             if(is_array($data)){
                 switch($type){
                 case 'text':
@@ -126,7 +118,7 @@ public function sanitize_data($data,$data_key,$type,$neddle_for_multiselect=fals
             }
     }
 
-
+    // sanitize array
     public function sanitize_array($input_array){
         if(is_array($input_array)){
             return array_map([$this,'sanitize_array'], $input_array);
@@ -134,7 +126,7 @@ public function sanitize_data($data,$data_key,$type,$neddle_for_multiselect=fals
             return is_scalar($input_array) ? sanitize_text_field($input_array) : $input_array ;
         }
     } 
-
+    //static function to easilly create metabox without creating instance of the class
     public static function createMetabox(string $slug,array $data){
         if(empty($slug) || empty($data)){
             return;
@@ -147,12 +139,12 @@ public function sanitize_data($data,$data_key,$type,$neddle_for_multiselect=fals
         add_action("save_post", [$instance,'save_metabox'],10,3);
     }
         }
-if(class_exists('KMFDTR_METS')){
-  // Set a unique prefix for the metabox
-  $slug = 'kmfdtr_metadata';
-  // Create a metabox
-  KMFDTR_METS::createMetabox($slug, [
-    'title'     => 'Register Texonomies',
-  ]);
+    if(class_exists('KMFDTR_METS')){
+    // Set a unique prefix for the metabox
+    $slug = 'kmfdtr_metadata';
+    // Create a metabox
+    KMFDTR_METS::createMetabox($slug, [
+        'title'     => 'Register Texonomies',
+    ]);
 
-}
+    }

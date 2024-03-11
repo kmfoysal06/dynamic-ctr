@@ -5,7 +5,8 @@ Author: Kazi Mohammad Foysal
 Author URI: http://profiles.wordpress.org/kmfoysal06
 Description: Simple and lightweight plugin for creating and managing custom taxonomies in WordPress.
 Version: 1.0
-
+License: GPLv2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
 */
 if(!defined('ABSPATH')){
     exit;

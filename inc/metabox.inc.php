@@ -15,26 +15,24 @@ class KMFDTR_METS {
     public function metabox_html(){
         wp_nonce_field(basename(__FILE__), 'kmfdtr_meta_nonce');
         echo '
-        <label for="taxonomy">Taxonomy Name:</label>
-        <input type="text" id="taxonomy" name="kmfdtr_metadata[][tax_name]" value="'.$this->get_the_saved_value(get_the_ID(),$this->meta_slug_og,'text','tax_name').'" required><br>
-        <label for="label">Taxonomy ID:</label>
-        <input type="text" id="label" name="kmfdtr_metadata[][tax_id]"  value="'.$this->get_the_saved_value(get_the_ID(),$this->meta_slug_og,'text','tax_id').'" required><br>
-        <label for="post_type">Post Type Name:</label>
-        <input type="text" id="post_type" name="kmfdtr_metadata[][post_type]" value="'.$this->get_the_saved_value(get_the_ID(),$this->meta_slug_og,'text','post_type').'" required><br>
-        <label for="hirarchial">Hirarchial:</label>
-        <input type="checkbox" id="hirarchial" name="kmfdtr_metadata[][hirarchial]" '.$this->get_the_saved_value(get_the_ID(),$this->meta_slug_og,'select','hirarchial').'>
+        <label for="'.esc_attr( "taxonomy" ).'">'.esc_html("Taxonomy Name:").'</label>
+        <input type="'.esc_attr( "text" ).'" id="'.esc_attr( "taxonomy" ).'" name="'.esc_attr( "kmfdtr_metadata[][tax_name]" ).'" value="'.esc_attr( $this->get_the_saved_value(get_the_ID(),$this->meta_slug_og,'text','tax_name') ).'" '.esc_attr("required").'><br>
+        <label for="'.esc_attr( "label" ).'">'.esc_html( "Taxonomy ID:" ).'</label>
+        <input type="'.esc_attr("text").'" id="'.esc_attr( "label" ).'" name="'.esc_attr( "kmfdtr_metadata[][tax_id]" ).'"  value="'.esc_attr( $this->get_the_saved_value(get_the_ID(),$this->meta_slug_og,'text','tax_id') ).'" '.esc_attr("required").'><br>
+        <label for="'.esc_attr( "hirarchial" ).'">'.esc_html( "Hirarchial:" ).'</label>
+        <input type="'.esc_attr( "checkbox" ).'" id="'.esc_attr( "hirarchial" ).'" name="'.esc_attr( "kmfdtr_metadata[][hirarchial]" ).'" '.esc_attr( "$this->get_the_saved_value(get_the_ID(),$this->meta_slug_og,'select','hirarchial')" ).'>
         <br>
-        <label for="query_var">Query Var:</label>
-        <input type="checkbox" id="query_var" name="kmfdtr_metadata[][query_var]" '.$this->get_the_saved_value(get_the_ID(),$this->meta_slug_og,'select','query_var').'>
+        <label for="'.esc_attr( "query_var" ).'">'.esc_html( "Query Var:" ).'</label>
+        <input type="'.esc_attr( "checkbox" ).'" id="'.esc_attr( "query_var" ).'" name="'.esc_attr( "kmfdtr_metadata[][query_var]" ).'" '.esc_attr( "$this->get_the_saved_value(get_the_ID(),$this->meta_slug_og,'select','query_var')" ).'>
         <br>
-        <label for="show_admin_column">Show Admin Column:</label>
-        <input type="checkbox" id="show_admin_column" name="kmfdtr_metadata[][show_admin_column]" '.$this->get_the_saved_value(get_the_ID(),$this->meta_slug_og,'select','show_admin_column').'>
+        <label for="'.esc_attr( "show_admin_column" ).'">'.esc_html( "Show Admin Column:" ).'</label>
+        <input type="'.esc_attr( "checkbox" ).'" id="'.esc_attr( "show_admin_column" ).'" name="'.esc_attr( "kmfdtr_metadata[][show_admin_column]" ).'" '.esc_attr( "$this->get_the_saved_value(get_the_ID(),$this->meta_slug_og,'select','show_admin_column')" ).'>
         ';
         $post_types = get_post_types([], 'objects');
-        echo '<label for="post_types">Select Post Types:</label>';
-        echo '<select id="post_types" name="kmfdtr_metadata[][post_types]" multiple>';
+        echo '<label for="'.esc_attr( "post_types" ).'">'.esc_html("Post Types").'</label>';
+        echo '<select name="'.esc_attr( "kmfdtr_metadata[][post_types]" ).'" id="'.esc_attr( "post_types" ).'" '.esc_attr( "Post Types" ).'>';
         foreach ($post_types as $post_type) {
-            echo '<option value="'.$post_type->name.'" '.$this->get_the_saved_value(get_the_ID(),$this->meta_slug_og,"multi_select",$post_type->name,"post_types").'>'.$post_type->name.'</option>';
+            echo '<option value="'.esc_attr( $post_type->name ).'" '.esc_attr( $this->get_the_saved_value(get_the_ID(),$this->meta_slug_og,'multi_select',$post_type->name,'post_types') ).'>'.esc_html( $post_type->label ).'</option>';
         }
         echo '</select>';
 

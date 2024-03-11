@@ -13,6 +13,7 @@ if(!defined('ABSPATH')){
 require_once plugin_dir_path(__FILE__) . 'inc/register_texonomy_post.php';
 require_once plugin_dir_path(__FILE__) . 'inc/metabox.inc.php';
 require_once plugin_dir_path(__FILE__) . 'inc/register-texonomy.inc.php';
+require_once plugin_dir_path(__FILE__) . 'inc/create_post.inc.php';
 // including necessary scrips and styles
 function admin_enqueue_scripts_callback(){
 

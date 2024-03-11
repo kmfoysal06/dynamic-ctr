@@ -20,13 +20,13 @@ class KMFDTR_METS {
         <label for="'.esc_attr( "label" ).'">'.esc_html( "Taxonomy ID:" ).'</label>
         <input type="'.esc_attr("text").'" id="'.esc_attr( "label" ).'" name="'.esc_attr( "kmfdtr_metadata[][tax_id]" ).'"  value="'.esc_attr( $this->get_the_saved_value(get_the_ID(),$this->meta_slug_og,'text','tax_id') ).'" '.esc_attr("required").'><br>
         <label for="'.esc_attr( "hirarchial" ).'">'.esc_html( "Hirarchial:" ).'</label>
-        <input type="'.esc_attr( "checkbox" ).'" id="'.esc_attr( "hirarchial" ).'" name="'.esc_attr( "kmfdtr_metadata[][hirarchial]" ).'" '.esc_attr( "$this->get_the_saved_value(get_the_ID(),$this->meta_slug_og,'select','hirarchial')" ).'>
+        <input type="'.esc_attr( "checkbox" ).'" id="'.esc_attr( "hirarchial" ).'" name="'.esc_attr( "kmfdtr_metadata[][hirarchial]" ).'" '.esc_attr( $this->get_the_saved_value(get_the_ID(),$this->meta_slug_og,'select','hirarchial') ).'>
         <br>
         <label for="'.esc_attr( "query_var" ).'">'.esc_html( "Query Var:" ).'</label>
-        <input type="'.esc_attr( "checkbox" ).'" id="'.esc_attr( "query_var" ).'" name="'.esc_attr( "kmfdtr_metadata[][query_var]" ).'" '.esc_attr( "$this->get_the_saved_value(get_the_ID(),$this->meta_slug_og,'select','query_var')" ).'>
+        <input type="'.esc_attr( "checkbox" ).'" id="'.esc_attr( "query_var" ).'" name="'.esc_attr( "kmfdtr_metadata[][query_var]" ).'" '.esc_attr( $this->get_the_saved_value(get_the_ID(),$this->meta_slug_og,'select','query_var') ).'>
         <br>
         <label for="'.esc_attr( "show_admin_column" ).'">'.esc_html( "Show Admin Column:" ).'</label>
-        <input type="'.esc_attr( "checkbox" ).'" id="'.esc_attr( "show_admin_column" ).'" name="'.esc_attr( "kmfdtr_metadata[][show_admin_column]" ).'" '.esc_attr( "$this->get_the_saved_value(get_the_ID(),$this->meta_slug_og,'select','show_admin_column')" ).'>
+        <input type="'.esc_attr( "checkbox" ).'" id="'.esc_attr( "show_admin_column" ).'" name="'.esc_attr( "kmfdtr_metadata[][show_admin_column]" ).'" '.esc_attr( $this->get_the_saved_value(get_the_ID(),$this->meta_slug_og,'select','show_admin_column') ).'>
         ';
         $post_types = get_post_types([], 'objects');
         echo '<label for="'.esc_attr( "post_types" ).'">'.esc_html("Post Types").'</label>';
@@ -62,19 +62,16 @@ public function save_metabox($post_id, $post, $update) {
     }
 
     // Sanitize and validate input data
-    // $cpr_id = isset($_POST[$this->meta_slug_og]['cpr_id']) ? sanitize_key($_POST[$this->meta_slug_og]['cpr_id']) : '';
-    // $cpr_name = isset($_POST[$this->meta_slug_og]['cpr_name']) ? sanitize_text_field($_POST[$this->meta_slug_og]['cpr_name']) : '';
-
-    // if (empty($cpr_id) || empty($cpr_name) || strlen($cpr_id) > 20 || strlen($cpr_name) > 20 || !preg_match('/^[a-zA-Z0-9_]+$/', $cpr_id) || !preg_match('/^[a-zA-Z0-9_]+$/', $cpr_name)) {
-    //     return;
-    // }
-
+    $tax_id = isset($_POST[$this->meta_slug_og]['tax_id']) ? sanitize_key($_POST[$this->meta_slug_og]['tax_id']) : '';
+    $tax_name = isset($_POST[$this->meta_slug_og]['tax_name']) ? sanitize_text_field($_POST[$this->meta_slug_og]['tax_name']) : '';
+    if(empty($tax_id) || empty($tax_name) || strlen($tax_id) > 20 || strlen($tax_name) > 20 || !preg_match('/^[a-zA-Z0-9_]+$/', $tax_id) || !preg_match('/^[a-zA-Z0-9_]+$/', $tax_name)){
+        return;
+    }
     // Check for uniqueness of ID using WordPress API
-    // $existing_ids = get_metadata('post', $post_id, $cpr_id, true);
-    // if ($existing_ids) {
-    //     return; // ID or name already exists, return to avoid duplicate
-    // }
-
+    $existing_ids = get_terms($tax_id, ['hide_empty' => false]);
+    if ($existing_ids) {
+        return; // ID or name already exists, return to avoid duplicate
+    }
     // Update post meta
     update_post_meta($post_id, $this->meta_slug_og, $this->sanitize_array($_POST[$this->meta_slug_og]));
 }

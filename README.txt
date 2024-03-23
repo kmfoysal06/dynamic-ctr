@@ -8,6 +8,12 @@ Requires PHP: 7.0
 License: GPLv2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
+== Library ==
+This plugin is using the following library:
+1. Select2: https://select2.org/
+License: Apache License 2.0
+License URI: https://www.apache.org/licenses/LICENSE-2.0
+
 Simple and lightweight plugin for creating and managing custom taxonomies in WordPress.
 
 === Description ==

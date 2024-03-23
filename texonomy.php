@@ -19,10 +19,10 @@ require_once plugin_dir_path(__FILE__) . 'inc/create_post.inc.php';
 function kmfdtr_load_assets(){
 
     //Add the Select2 CSS file
-    wp_enqueue_style( 'select2-css', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css', array(), '4.1.0-rc.0');
+    wp_enqueue_style( 'select2-css', plugin_dir_url( __FILE__ ) . 'assets/inc/select2/css/select2.min.css', '4.0.13' );
 
     //Add the Select2 JavaScript file in footer
-    wp_enqueue_script( 'select2-js', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js', 'jquery', '4.1.0-rc.0', false );
+    wp_enqueue_script( 'select2-js',  plugin_dir_url( __FILE__ ) . 'assets/inc/select2/js/select2.min.js', 'jquery', '4.0.13', false );
 
     //Add a JavaScript file to initialize the Select2 elements
     wp_enqueue_script( 'select2-init', plugin_dir_url( __FILE__ ) . 'assets/select2-init.js', array('jquery'), '1.0.0', false );

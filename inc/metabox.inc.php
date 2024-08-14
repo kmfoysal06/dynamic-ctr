@@ -65,14 +65,22 @@ class KMFDTR_METS {
 
         // Sanitize and validate input data
 
-        $marged_post_data = array_merge(...$_POST[$this->meta_slug_og]);
+        $marged_post_data = array_merge(...$this->sanitize_array($_POST[$this->meta_slug_og]));
 
         $tax_id = isset($marged_post_data['tax_id']) ? $marged_post_data['tax_id'] : '';
         $tax_name = isset($marged_post_data['tax_name']) ? $marged_post_data['tax_name'] : '';
 
+        //check uniqueness of ID with existing taxonomies
+        $taxonomies = get_taxonomies([], 'objects');
+        foreach ($taxonomies as $taxonomy) {
+            if ($taxonomy->name == $tax_id) {
+                return;
+            }
+        }
 
+        // final validation
 
-        if(empty($tax_id) || empty($tax_name) || strlen($tax_id) > 20 || strlen($tax_name) > 20 || !preg_match('/^[a-zA-Z0-9_]+$/', $tax_id)){
+        if(empty($tax_id) || empty($tax_name) || strlen($tax_id) > 20 || strlen($tax_name) > 20 || !preg_match('/^[a-zA-Z0-9_]+$/', $tax_id) || !preg_match('/^[a-zA-Z0-9_]+$/', $tax_name)){
             return;
         }
 

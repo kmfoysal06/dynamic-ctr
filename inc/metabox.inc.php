@@ -48,10 +48,11 @@ class KMFDTR_METS {
         }
 
         // Nonce verification
-        $kmfdtr_meta_nonce = isset($_POST['kmfdtr_meta_nonce']) ? sanitize_text_field($_POST['kmfdtr_meta_nonce']) : '';
+        $kmfdtr_meta_nonce = isset($_POST['kmfdtr_meta_nonce']) ? wp_unslash(sanitize_text_field($_POST['kmfdtr_meta_nonce'])) : '';
         if (!wp_verify_nonce($kmfdtr_meta_nonce, basename(__FILE__))) {
             return;
         }
+        wp_die(wp_verify_nonce($kmfdtr_meta_nonce, basename(__FILE__)));
 
         // Avoid autosave and revision issues
         if (wp_is_post_revision($post_id) || defined('DOING_AUTOSAVE') && DOING_AUTOSAVE || wp_is_post_autosave($post_id)) {
